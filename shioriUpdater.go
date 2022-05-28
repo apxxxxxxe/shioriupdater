@@ -18,6 +18,8 @@ const name = "shioriupdater"
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
 	{"satori.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
+	{"ssu.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
+	{"satorite.exe", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 }
 
 // {{{ downloadFile(tempDir, url string) (string, error)
@@ -103,30 +105,37 @@ func walkDir(dir string) []string {
 func getShioriFiles(tempDir string) (map[string]string, error) {
 	result := map[string]string{}
 
+	downloadedPath := map[string]string{}
 	for _, shiori := range shioriPaths {
 
 		fileName := shiori[0]
 		url := shiori[1]
 
-		fmt.Println("ダウンロード中: ", url)
+		var (
+			unzipDir string
+		)
 
-		dlPath, err := downloadFile(tempDir, url)
-		if err != nil {
-			return map[string]string{}, err
+		if downloadedPath[url] != "" {
+			// ダウンロード済なら解凍先パスを取得
+			unzipDir = downloadedPath[url]
+		} else {
+			fmt.Println("ダウンロード中: ", url)
+
+			dlPath, err := downloadFile(tempDir, url)
+			if err != nil {
+				return map[string]string{}, err
+			}
+
+			unzipDir = filepath.Join(filepath.Dir(dlPath), filepath.Base(dlPath)+"_out")
+
+			if err := Unzip(dlPath, unzipDir); err != nil {
+				panic(err)
+			}
+
+			downloadedPath[url] = unzipDir
 		}
 
-		out := filepath.Join(filepath.Dir(dlPath), filepath.Base(dlPath)+"_out")
-
-		if err := Unzip(dlPath, out); err != nil {
-			panic(err)
-		}
-
-		files := walkDir(out)
-		if err != nil {
-			panic(err)
-		}
-
-		for _, f := range files {
+		for _, f := range walkDir(unzipDir) {
 			if strings.HasSuffix(f, fileName) {
 				result[fileName] = f
 				break
@@ -165,28 +174,28 @@ func main() {
 	}
 	fmt.Println("取得完了")
 
+	// 取得した栞ファイルをOpenしておく
+	dllNames := []string{}
+	dllFiles := map[string]*os.File{}
+	for _, s := range shioriPaths {
+		dllName := s[0]
+		dllNames = append(dllNames, dllName)
+		dllFiles[dllName], err = os.Open(dllPaths[dllName])
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+
 	fmt.Println("\n更新対象の検索を開始")
 	files := walkDir(baseDir)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	shiori := []string{}
-	for _, s := range shioriPaths {
-		shiori = append(shiori, s[0])
-	}
 
 	count := 0
-	for _, dll := range shiori {
-		srcFile, err := os.Open(dllPaths[dll])
-		if err != nil {
-			panic(err)
-		}
 
-		fmt.Println(dll, "を検索中...")
+	for _, file := range files {
 
-		for _, file := range files {
-			if strings.Contains(file, dll) {
+		for _, dllName := range dllNames {
+
+			if strings.Contains(file, dllName) {
 
 				count++
 				fmt.Println("更新: ", file)
@@ -196,14 +205,17 @@ func main() {
 					panic(err)
 				}
 
-				if _, err := io.Copy(destFile, srcFile); err != nil {
+				if _, err := io.Copy(destFile, dllFiles[dllName]); err != nil {
 					panic(err)
 				}
 
 				destFile.Close()
 			}
 		}
-		srcFile.Close()
+	}
+
+	for _, dllFile := range dllFiles {
+		dllFile.Close()
 	}
 
 	if count == 0 {
