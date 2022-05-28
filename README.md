@@ -5,7 +5,7 @@
 複数ゴーストの栞を一括で最新版に更新します。
 
 ### 対応している栞
-以下のファイルが更新対象です。
+以下の栞とファイルが更新対象です。
 - [里々](https://github.com/ponapalt/satoriya-shiori)
   - satori.dll
   - ssu.dll
