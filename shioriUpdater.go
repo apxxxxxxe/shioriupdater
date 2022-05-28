@@ -15,6 +15,7 @@ import (
 )
 
 const name = "shioriupdater"
+const version = "1.1"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
@@ -152,6 +153,13 @@ func getShioriFiles(tempDir string) (map[string]string, error) {
 func main() {
 
 	var baseDir string
+
+	for _, args := range os.Args {
+		if args == "--version" {
+			fmt.Println(name, "version", version)
+			return
+		}
+	}
 
 	if len(os.Args) > 1 {
 		baseDir = os.Args[1]
