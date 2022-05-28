@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const name = "shioriupdater"
@@ -83,7 +84,8 @@ func Unzip(src, dest string) error {
 func walkDir(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
+		return []string{}
 	}
 
 	var paths []string
@@ -101,7 +103,6 @@ func walkDir(dir string) []string {
 // }}}
 
 // {{{ getShioriFiles() (map[string]string, error)
-// shioriのdllファイルをDLしてパスを返す
 func getShioriFiles(tempDir string) (map[string]string, error) {
 	result := map[string]string{}
 
@@ -174,16 +175,25 @@ func main() {
 	}
 	fmt.Println("取得完了")
 
-	// 取得した栞ファイルをOpenしておく
 	dllNames := []string{}
-	dllFiles := map[string]*os.File{}
+	dllBytes := map[string][]byte{}
+	dllModTimes := map[string]time.Time{}
 	for _, s := range shioriPaths {
 		dllName := s[0]
+
 		dllNames = append(dllNames, dllName)
-		dllFiles[dllName], err = os.Open(dllPaths[dllName])
+
+		fs, err := os.Stat(dllPaths[dllName])
 		if err != nil {
 			log.Fatalln(err)
 		}
+		dllModTimes[dllName] = fs.ModTime()
+
+		dllBytes[dllName], err = ioutil.ReadFile(dllPaths[dllName])
+		if err != nil {
+			log.Fatalln(err)
+		}
+
 	}
 
 	fmt.Println("\n更新対象の検索を開始")
@@ -198,24 +208,20 @@ func main() {
 			if strings.Contains(file, dllName) {
 
 				count++
+
+				fs, err := os.Stat(file)
+				if err != nil {
+					log.Fatalln(err)
+				}
+
+				if err := ioutil.WriteFile(file, dllBytes[dllName], fs.Mode().Perm()); err != nil {
+					log.Fatalln(err)
+				}
+
 				fmt.Println("更新: ", file)
 
-				destFile, err := os.Create(file)
-				if err != nil {
-					panic(err)
-				}
-
-				if _, err := io.Copy(destFile, dllFiles[dllName]); err != nil {
-					panic(err)
-				}
-
-				destFile.Close()
 			}
 		}
-	}
-
-	for _, dllFile := range dllFiles {
-		dllFile.Close()
 	}
 
 	if count == 0 {
@@ -226,7 +232,7 @@ func main() {
 
 	fmt.Println("\n終了処理中...")
 	if err := os.RemoveAll(tempDir); err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Print("終了: Enterキーで閉じる")
