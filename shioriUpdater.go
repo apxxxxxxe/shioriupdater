@@ -15,13 +15,17 @@ import (
 )
 
 const name = "shioriupdater"
-const version = "1.1"
+const version = "1.1.1"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
 	{"satori.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 	{"ssu.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 	{"satorite.exe", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
+}
+
+func formatTime(t time.Time) string {
+	return t.Format(time.RFC1123)
 }
 
 // {{{ downloadFile(tempDir, url string) (string, error)
@@ -53,6 +57,8 @@ func Unzip(src, dest string) error {
 	defer r.Close()
 
 	for _, f := range r.File {
+		modTime := f.Modified
+
 		rc, err := f.Open()
 		if err != nil {
 			return err
@@ -71,6 +77,11 @@ func Unzip(src, dest string) error {
 			defer f.Close()
 
 			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+
+			err = os.Chtimes(path, modTime, modTime)
 			if err != nil {
 				return err
 			}
@@ -222,12 +233,25 @@ func main() {
 					log.Fatalln(err)
 				}
 
-				if err := ioutil.WriteFile(file, dllBytes[dllName], fs.Mode().Perm()); err != nil {
-					log.Fatalln(err)
+				if formatTime(fs.ModTime()) == formatTime(dllModTimes[dllName]) {
+
+					fmt.Println("最新版です。スキップ: ", file)
+
+				} else {
+
+					// ファイル内容をコピー パーミッションは旧ファイルと同等に
+					if err := ioutil.WriteFile(file, dllBytes[dllName], fs.Mode().Perm()); err != nil {
+						log.Fatalln(err)
+					}
+
+					// アクセス日時,更新日時をコピー
+					if err := os.Chtimes(file, dllModTimes[dllName], dllModTimes[dllName]); err != nil {
+						log.Fatalln(err)
+					}
+
+					fmt.Println("更新: ", file)
+
 				}
-
-				fmt.Println("更新: ", file)
-
 			}
 		}
 	}
