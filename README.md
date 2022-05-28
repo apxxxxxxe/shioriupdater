@@ -5,9 +5,13 @@
 複数ゴーストの栞を一括で最新版に更新します。
 
 ### 対応している栞
-
+以下のファイルが更新対象です。
 - [里々](https://github.com/ponapalt/satoriya-shiori)
+  - satori.dll
+  - ssu.dll
+  - satorite.exe
 - [YAYA](https://github.com/ponapalt/yaya-shiori)
+  - yaya.dll
 
 ### 使用例
 
