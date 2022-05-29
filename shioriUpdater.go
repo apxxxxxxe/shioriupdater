@@ -27,10 +27,14 @@ var shioriPaths = [][]string{
 	{"satorite.exe", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 }
 
+// {{{ formatTime(t time.Time) string
 func formatTime(t time.Time) string {
 	return t.Format(time.RFC1123)
 }
 
+// }}}
+
+// {{{ updateSelf() bool
 func updateSelf() bool {
 	latest, found, err := selfupdate.DetectLatest("apxxxxxxe/shioriupdater")
 	if err != nil {
@@ -56,6 +60,8 @@ func updateSelf() bool {
 	fmt.Println("更新しました:", version, "->", latest.Version)
 	return true
 }
+
+// }}}
 
 // {{{ downloadFile(tempDir, url string) (string, error)
 func downloadFile(tempDir, url string) (string, error) {
