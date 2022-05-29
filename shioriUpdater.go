@@ -226,6 +226,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer os.RemoveAll(tempDir)
 
 	fmt.Println("\n最新版の栞を取得中...")
 	dllPaths, err := getShioriFiles(tempDir)
@@ -299,11 +300,6 @@ func main() {
 		fmt.Println("更新対象が見つかりませんでした")
 	} else {
 		fmt.Println("検索終了")
-	}
-
-	fmt.Println("\n終了処理中...")
-	if err := os.RemoveAll(tempDir); err != nil {
-		log.Fatalln(err)
 	}
 
 	fmt.Print("終了: Enterキーで閉じる")
