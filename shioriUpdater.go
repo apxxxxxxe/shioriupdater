@@ -12,10 +12,13 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/blang/semver"
+	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 const name = "shioriupdater"
-const version = "1.1.1"
+const version = "1.1.3"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
@@ -26,6 +29,32 @@ var shioriPaths = [][]string{
 
 func formatTime(t time.Time) string {
 	return t.Format(time.RFC1123)
+}
+
+func updateSelf() bool {
+	latest, found, err := selfupdate.DetectLatest("apxxxxxxe/shioriupdater")
+	if err != nil {
+		fmt.Println("エラー: ", err)
+		return false
+	}
+
+	if !found {
+		fmt.Println("バージョンが取得できませんでした")
+		return false
+	}
+
+	v := semver.MustParse(version)
+	if found && latest.Version.Equals(v) {
+		fmt.Println("最新バージョンです")
+		return false
+	}
+
+	if err := selfupdate.UpdateTo(latest.AssetURL, os.Args[0]); err != nil {
+		log.Println("更新処理中にエラーが発生しました:", err)
+		return false
+	}
+	fmt.Println("更新しました:", version, "->", latest.Version)
+	return true
 }
 
 // {{{ downloadFile(tempDir, url string) (string, error)
@@ -134,7 +163,7 @@ func getShioriFiles(tempDir string) (map[string]string, error) {
 			// ダウンロード済なら解凍先パスを取得
 			unzipDir = downloadedPath[url]
 		} else {
-			fmt.Println("ダウンロード中: ", url)
+			fmt.Println("ダウンロード中:", url)
 
 			dlPath, err := downloadFile(tempDir, url)
 			if err != nil {
@@ -174,6 +203,15 @@ func main() {
 		}
 	}
 
+	fmt.Println(name, "本体のアップデートを確認中…")
+	if updateSelf() {
+		fmt.Println("\n更新完了: １度閉じてから再実行してください")
+		fmt.Print("終了: Enterキーで閉じる")
+		bufio.NewReader(os.Stdin).ReadBytes('\n')
+		return
+	}
+	fmt.Println("アップデート確認処理完了")
+
 	if len(os.Args) > 1 {
 		baseDir = os.Args[1]
 	} else {
@@ -189,7 +227,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	fmt.Println("最新版の栞を取得中...")
+	fmt.Println("\n最新版の栞を取得中...")
 	dllPaths, err := getShioriFiles(tempDir)
 	if err != nil {
 		log.Fatalln(err)
@@ -218,11 +256,10 @@ func main() {
 	}
 
 	fmt.Println("\n更新対象の検索を開始")
-	files := walkDir(baseDir)
 
 	count := 0
 
-	for _, file := range files {
+	for _, file := range walkDir(baseDir) {
 
 		for _, dllName := range dllNames {
 
