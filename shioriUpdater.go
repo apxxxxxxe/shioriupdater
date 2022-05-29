@@ -266,8 +266,6 @@ func main() {
 
 			if strings.Contains(file, dllName) {
 
-				count++
-
 				fs, err := os.Stat(file)
 				if err != nil {
 					log.Fatalln(err)
@@ -278,6 +276,8 @@ func main() {
 					fmt.Println("最新版です。スキップ: ", file)
 
 				} else {
+
+					count++
 
 					// ファイル内容をコピー パーミッションは旧ファイルと同等に
 					if err := ioutil.WriteFile(file, dllBytes[dllName], fs.Mode().Perm()); err != nil {
