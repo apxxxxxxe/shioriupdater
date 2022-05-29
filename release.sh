@@ -6,10 +6,10 @@ if [ $? -eq 1 ]; then
   exit 1
 fi
 
-remote_latest_version=$(git describe --tags --abbrev=0)
+latest_version=$(git describe --tags)
 
-if [ ${version} == ${remote_latest_version} ]; then
-  echo "error: this version is the same as the latest remote one" 1>&2
+if [ ${version} == ${latest_version} ]; then
+  echo "error: this version is the same as the latest one" 1>&2
   exit 1
 fi
 
