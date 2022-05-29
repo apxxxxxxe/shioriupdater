@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,7 +19,7 @@ import (
 )
 
 const name = "shioriupdater"
-const version = "1.1.3"
+const version = "1.1.4"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
@@ -133,7 +134,11 @@ func Unzip(src, dest string) error {
 func walkDir(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		log.Fatalln(err)
+		switch err.(type) {
+		case *fs.PathError:
+			fmt.Println("エラー:", err)
+			fmt.Println("このディレクトリ以下の探索をスキップします")
+		}
 		return []string{}
 	}
 
