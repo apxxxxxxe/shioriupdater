@@ -15,4 +15,4 @@ fi
 
 GOOS=windows GOARCH=386 go build -o pkg/shioriupdater_windows_386.exe
 
-ghr "v${version}" pkg/
+ghr "${version}" pkg/
