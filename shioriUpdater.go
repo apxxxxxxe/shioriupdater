@@ -59,6 +59,8 @@ func Unzip(src, dest string) error {
 	for _, f := range r.File {
 		modTime := f.Modified
 
+		os.MkdirAll(dest, 0755)
+
 		rc, err := f.Open()
 		if err != nil {
 			return err
