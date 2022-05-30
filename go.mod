@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/mitchellh/go-ps v1.0.0
 	github.com/rhysd/go-github-selfupdate v1.2.3
 )
 

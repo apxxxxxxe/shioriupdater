@@ -15,11 +15,12 @@ import (
 	"time"
 
 	"github.com/blang/semver"
+	"github.com/mitchellh/go-ps"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 const name = "shioriupdater"
-const version = "1.1.4"
+const version = "1.1.5"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
@@ -27,6 +28,28 @@ var shioriPaths = [][]string{
 	{"ssu.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 	{"satorite.exe", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 }
+
+// {{{ isProcExist(name string) bool
+func isProcExist(name string) bool {
+	var result bool
+
+	processes, err := ps.Processes()
+
+	if err != nil {
+		os.Exit(1)
+	}
+
+	result = false
+	for _, p := range processes {
+		if p.Executable() == name {
+			result = true
+		}
+	}
+
+	return result
+}
+
+// }}}
 
 // {{{ formatTime(t time.Time) string
 func formatTime(t time.Time) string {
@@ -277,12 +300,12 @@ func main() {
 
 			if strings.Contains(file, dllName) {
 
-				fs, err := os.Stat(file)
+				stat, err := os.Stat(file)
 				if err != nil {
 					log.Fatalln(err)
 				}
 
-				if formatTime(fs.ModTime()) == formatTime(dllModTimes[dllName]) {
+				if formatTime(stat.ModTime()) == formatTime(dllModTimes[dllName]) {
 
 					fmt.Println("最新版です。スキップ: ", file)
 
@@ -291,8 +314,18 @@ func main() {
 					count++
 
 					// ファイル内容をコピー パーミッションは旧ファイルと同等に
-					if err := ioutil.WriteFile(file, dllBytes[dllName], fs.Mode().Perm()); err != nil {
-						log.Fatalln(err)
+					if err := ioutil.WriteFile(file, dllBytes[dllName], stat.Mode().Perm()); err != nil {
+						switch err.(type) {
+						case *fs.PathError:
+							if isProcExist("ssp.exe") {
+								fmt.Println("エラー: ファイルの書き込みに失敗しました。SSPなどで開いている場合は閉じてから再実行してください。スキップ:", file)
+							} else {
+								fmt.Println("エラー: ファイルの書き込みに失敗しました。アプリケーションで開いている場合は閉じてから再実行してください。スキップ:", file)
+							}
+							continue
+						default:
+							log.Fatalln(err)
+						}
 					}
 
 					// アクセス日時,更新日時をコピー

@@ -6,7 +6,7 @@ if [ $? -eq 1 ]; then
   exit 1
 fi
 
-latest_version=$(git describe --tags)
+latest_version=$(git describe --tags --abbrev=0)
 
 if [ ${version} == ${latest_version} ]; then
   echo "error: this version is the same as the latest one" 1>&2
