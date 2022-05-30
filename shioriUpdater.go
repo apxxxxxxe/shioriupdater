@@ -11,22 +11,42 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/bi-zone/go-fileversion"
 	"github.com/blang/semver"
 	"github.com/mitchellh/go-ps"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
 )
 
 const name = "shioriupdater"
-const version = "1.1.5"
+const version = "1.1.6"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
 	{"satori.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 	{"ssu.dll", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
 	{"satorite.exe", "https://github.com/ponapalt/satoriya-shiori/releases/latest/download/satori.zip"},
+}
+
+func getFileVersion(path string) (int, error) {
+	info, err := fileversion.New(path)
+	if err != nil {
+		return -1, err
+	}
+
+	verString := info.FileVersion()
+	verString = strings.ReplaceAll(verString, " ", "")
+	verString = strings.ReplaceAll(verString, ",", "")
+
+	ver, err := strconv.Atoi(verString)
+	if err != nil {
+		return -1, err
+	}
+
+	return ver, nil
 }
 
 // {{{ isProcExist(name string) bool
@@ -207,7 +227,7 @@ func getShioriFiles(tempDir string) (map[string]string, error) {
 			unzipDir = filepath.Join(filepath.Dir(dlPath), filepath.Base(dlPath)+"_out")
 
 			if err := Unzip(dlPath, unzipDir); err != nil {
-				panic(err)
+				return map[string]string{}, err
 			}
 
 			downloadedPath[url] = unzipDir
@@ -305,7 +325,17 @@ func main() {
 					log.Fatalln(err)
 				}
 
-				if formatTime(stat.ModTime()) == formatTime(dllModTimes[dllName]) {
+				currentVersion, err := getFileVersion(file)
+				if err != nil {
+					log.Fatalln(err)
+				}
+
+				latestVersion, err := getFileVersion(dllPaths[dllName])
+				if err != nil {
+					log.Fatalln(err)
+				}
+
+				if currentVersion >= latestVersion {
 
 					fmt.Println("最新版です。スキップ: ", file)
 
