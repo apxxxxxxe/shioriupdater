@@ -54,3 +54,6 @@
 
 ### 注意
 - 更新対象のゴースト起動中は上手くファイルが更新されません。終了してから実行してください
+
+### ダウンロード
+[Release](https://github.com/apxxxxxxe/shioriupdater/releases)ページから最新版をダウンロードできます。
