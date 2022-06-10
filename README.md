@@ -16,11 +16,11 @@
 
 ### 使用例
 
-1. shioriupdater.exe を図の位置に配置します。
+1. shioriupdater_windows_386.exe を図の位置に配置します。
 
 ```
 .
-├── shioriupdater.exe
+├── shioriupdater_windows_386.exe
 │
 ├── myghost1
 │   ├── install.txt
