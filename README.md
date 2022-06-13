@@ -1,5 +1,6 @@
-## shioriupdater
 
+[![downloads](https://img.shields.io/github/downloads/apxxxxxxe/shioriupdater/total?color=blue)](https://github.com/apxxxxxxe/shioriupdater/releases)
+# shioriupdater
 ### これは何？
 
 複数ゴーストの栞を一括で最新版に更新します。
