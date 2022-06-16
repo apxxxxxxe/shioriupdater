@@ -1,5 +1,4 @@
 
-[![downloads](https://img.shields.io/github/downloads/apxxxxxxe/shioriupdater/total?color=blue)](https://github.com/apxxxxxxe/shioriupdater/releases)
 # shioriupdater
 ### これは何？
 
@@ -57,4 +56,4 @@
 - 更新対象のゴースト起動中は上手くファイルが更新されません。終了してから実行してください
 
 ### ダウンロード
-[Release](https://github.com/apxxxxxxe/shioriupdater/releases)ページから最新版をダウンロードできます。
+[![shioriupdater_windows_386.exe](https://img.shields.io/github/downloads/apxxxxxxe/shioriupdater/total?color=%2359a6b5&label=shioriupdater_windows_386.exe&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater_windows_386.exe) 
