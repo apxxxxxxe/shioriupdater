@@ -1,4 +1,4 @@
-[![shioriupdater.exe](https://img.shields.io/github/v/release/apxxxxxxe/shioriupdater?color=%2359a6b5&label=shioriupdater.nar&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater.nar) 
+[![shioriupdater_windows_386.exe](https://img.shields.io/github/v/release/apxxxxxxe/shioriupdater?color=%2359a6b5&label=shioriupdater_windows_386.exe&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater_windows_386.exe)
 [![commits](https://img.shields.io/github/commit-activity/m/apxxxxxxe/shioriupdater?color=%2359a6b5)](https://github.com/apxxxxxxe/shioriupdater/commits/main)
 [![commits](https://img.shields.io/tokei/lines/github/apxxxxxxe/shioriupdater?color=%2359a6b5)](https://github.com/apxxxxxxe/shioriupdater/commits/main)
 
@@ -60,4 +60,4 @@
 - 更新対象のゴースト起動中は上手くファイルが更新されません。終了してから実行してください
 
 ### ダウンロード
-[![shioriupdater.exe](https://img.shields.io/github/v/release/apxxxxxxe/shioriupdater?color=%2359a6b5&label=shioriupdater.nar&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater.nar) 
+[![shioriupdater_windows_386.exe](https://img.shields.io/github/v/release/apxxxxxxe/shioriupdater?color=%2359a6b5&label=shioriupdater_windows_386.exe&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater_windows_386.exe)
