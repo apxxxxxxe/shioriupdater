@@ -2,7 +2,6 @@
 [![commits](https://img.shields.io/github/last-commit/apxxxxxxe/shioriupdater?color=%2359a6b5&label=%E6%9C%80%E7%B5%82%E6%9B%B4%E6%96%B0&logo=github)](https://github.com/apxxxxxxe/shioriupdater/commits/main)
 [![commits](https://img.shields.io/tokei/lines/github/apxxxxxxe/shioriupdater?color=%2359a6b5)](https://github.com/apxxxxxxe/shioriupdater/commits/main)
 
-
 # shioriupdater
 ### これは何？
 
