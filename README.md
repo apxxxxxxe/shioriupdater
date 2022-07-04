@@ -1,3 +1,5 @@
+[![shioriupdater_windows_386.exe](https://img.shields.io/github/downloads/apxxxxxxe/shioriupdater/total?color=%2359a6b5&label=shioriupdater_windows_386.exe&logo=github)](https://github.com/apxxxxxxe/shioriupdater/releases/latest/download/shioriupdater_windows_386.exe) 
+[![commits](https://img.shields.io/github/last-commit/apxxxxxxe/shioriupdater?color=%2359a6b5&label=%E6%9C%80%E7%B5%82%E6%9B%B4%E6%96%B0&logo=github)](https://github.com/apxxxxxxe/shioriupdater/commits/main)
 
 # shioriupdater
 ### これは何？
