@@ -22,7 +22,7 @@ import (
 )
 
 const name = "shioriupdater"
-const version = "1.1.6"
+const version = "1.1.7"
 
 var shioriPaths = [][]string{
 	{"yaya.dll", "https://github.com/ponapalt/yaya-shiori/releases/latest/download/yaya.zip"},
@@ -49,7 +49,6 @@ func getFileVersion(path string) (int, error) {
 	return ver, nil
 }
 
-// {{{ isProcExist(name string) bool
 func isProcExist(name string) bool {
 	var result bool
 
@@ -69,16 +68,10 @@ func isProcExist(name string) bool {
 	return result
 }
 
-// }}}
-
-// {{{ formatTime(t time.Time) string
 func formatTime(t time.Time) string {
 	return t.Format(time.RFC1123)
 }
 
-// }}}
-
-// {{{ updateSelf() bool
 func updateSelf() bool {
 	latest, found, err := selfupdate.DetectLatest("apxxxxxxe/shioriupdater")
 	if err != nil {
@@ -105,9 +98,6 @@ func updateSelf() bool {
 	return true
 }
 
-// }}}
-
-// {{{ downloadFile(tempDir, url string) (string, error)
 func downloadFile(tempDir, url string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -125,9 +115,6 @@ func downloadFile(tempDir, url string) (string, error) {
 	return out.Name(), err
 }
 
-// }}}
-
-// {{{ Unzip(src, dest string) error
 func Unzip(src, dest string) error {
 	r, err := zip.OpenReader(src)
 	if err != nil {
@@ -171,9 +158,6 @@ func Unzip(src, dest string) error {
 	return nil
 }
 
-// }}}
-
-// {{{ walkDir(dir string) ([]string, error)
 func walkDir(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -197,9 +181,6 @@ func walkDir(dir string) []string {
 	return paths
 }
 
-// }}}
-
-// {{{ getShioriFiles() (map[string]string, error)
 func getShioriFiles(tempDir string) (map[string]string, error) {
 	result := map[string]string{}
 
@@ -243,8 +224,6 @@ func getShioriFiles(tempDir string) (map[string]string, error) {
 	}
 	return result, nil
 }
-
-// }}}
 
 func main() {
 
